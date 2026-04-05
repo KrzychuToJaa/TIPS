@@ -39,8 +39,7 @@ if  (czy_identyczne_losowe)
 end
 disp(['Średnia długość pojedynczego kodu: ', num2str(srednia_dlugosc_losowa), ' bitów na znak']);
 
-% ETAP 3: 
-% Zakodowanie tekstu o długości >= 1000 znaków
+% ETAP 3: Zakodowanie tekstu o długości >= 1000 znaków
 probka_tekstu = 'litwoojczyznomojatyjestesjakzdrowieilecietrzebacenictentylkosiedowiektociestracildzispieknosctwawcalejozdobiewidzeiopisujeboteskniepotobie';
 ciag_tekstowy = repmat(probka_tekstu, 1, 10); 
 dlugosc_tekstu = length(ciag_tekstowy);
