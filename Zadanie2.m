@@ -1,76 +1,80 @@
 % =========================================================================
-% ETAP 0: Inicjalizacja alfabetu (0-9, a-z)
+% ETAP 0: Przygotowanie alfabetu (cyfry 0-9 oraz małe litery a-z)
 % =========================================================================
-alphabet = ['0':'9', 'a':'z'];
-num_symbols = length(alphabet);
-symbols = num2cell(alphabet);
+alfabet = ['0':'9', 'a':'z'];
+rozmiar_alfabetu = length(alfabet);
+symbole_alfabetu = num2cell(alfabet);
 
 % =========================================================================
-% ETAP 1: Kodowanie losowego ciągu znaków (>= 1000)
+% ETAP 1: Kodowanie losowego ciągu znaków
 % =========================================================================
-N = 1000;
-% Generujemy całkowicie losowe indeksy (rozkład jednostajny)
-rand_idx = randi([1, num_symbols], 1, N);
-random_seq = alphabet(rand_idx);
+dlugosc_ciagu = 1000;
 
-% Obliczanie rzeczywistych częstotliwości (prawdopodobieństw) w ciągu losowym
-counts_rand = zeros(1, num_symbols);
-for i = 1:num_symbols
-    counts_rand(i) = sum(random_seq == alphabet(i));
+% 1. Generowanie losowego ciągu znaków z naszego alfabetu
+losowe_indeksy = randi([1, rozmiar_alfabetu], 1, dlugosc_ciagu);
+ciag_losowy = alfabet(losowe_indeksy);
+
+% 2. Obliczanie prawdopodobieństwa wystąpienia każdego znaku
+wystapienia_losowe = zeros(1, rozmiar_alfabetu);
+for i = 1:rozmiar_alfabetu
+    wystapienia_losowe(i) = sum(ciag_losowy == alfabet(i));
 end
-prob_rand = counts_rand / N;
+prawdopodobienstwa_losowe = wystapienia_losowe / dlugosc_ciagu;
 
-% Usunięcie symboli o prawdopodobieństwie 0 (wymaganie funkcji huffmandict)
-valid_idx_r = prob_rand > 0;
-symbols_rand_valid = symbols(valid_idx_r);
-prob_rand_valid = prob_rand(valid_idx_r);
+% 3. Usunięcie znaków, które nie wystąpiły ani razu (prawdopodobieństwo = 0)
+czy_niezerowe_losowe = prawdopodobienstwa_losowe > 0;
+uzyte_symbole_losowe = symbole_alfabetu(czy_niezerowe_losowe);
+uzyte_prawdobienstwa_losowe = prawdopodobienstwa_losowe(czy_niezerowe_losowe);
 
-% Tworzenie słownika Huffmana i pobranie średniej długości słowa
-[dict_rand, avg_len_rand] = huffmandict(symbols_rand_valid, prob_rand_valid);
+% 4. Tworzenie słownika Huffmana
+[slownik_losowy, srednia_dlugosc_losowa] = huffmandict(uzyte_symbole_losowe, uzyte_prawdobienstwa_losowe);
 
-% Kodowanie i dekodowanie
-sig_rand_cell = num2cell(random_seq);
-hcode_rand = huffmanenco(sig_rand_cell, dict_rand);
-dhsig_rand_cell = huffmandeco(hcode_rand, dict_rand);
-decoded_rand = cell2mat(dhsig_rand_cell);
+% 5. Kodowanie i dekodowanie
+ciag_losowy_do_kodowania = num2cell(ciag_losowy);
+zakodowane_bity_losowe = huffmanenco(ciag_losowy_do_kodowania, slownik_losowy);
+odkodowane_komorki_losowe = huffmandeco(zakodowane_bity_losowe, slownik_losowy);
+odkodowany_ciag_losowy = cell2mat(odkodowane_komorki_losowe);
 
-% Sprawdzenie poprawności
-is_equal_rand = isequal(random_seq, decoded_rand);
+% 6. Sprawdzenie poprawności
+czy_identyczne_losowe = isequal(ciag_losowy, odkodowany_ciag_losowy);
 disp('--- CIĄG LOSOWY ---');
-disp(['Czy odkodowany ciąg jest identyczny z oryginałem? ', num2str(is_equal_rand)]);
-disp(['Średnia długość słowa kodowego: ', num2str(avg_len_rand), ' bitów/znak']);
+disp(['Czy odkodowany ciąg jest w 100% zgodny z oryginałem? ', num2str(czy_identyczne_losowe)]);
+disp(['Średnia długość pojedynczego kodu: ', num2str(srednia_dlugosc_losowa), ' bitów na znak']);
+
 
 % =========================================================================
-% ETAP 2: Kodowanie tekstu naturalnego (>= 1000 znaków)
+% ETAP 2: Kodowanie naturalnego tekstu (język polski)
 % =========================================================================
-% Używamy POJEDYNCZYCH cudzysłowów, aby stworzyć wektor znaków (char array)
-base_text = 'tojestbardzodlugitekstsluzacydotestowaniaalgorytmukodowaniahuffmanazawierajacycyfrytakiejak123orazwieleinnychznakow';
-text_seq = repmat(base_text, 1, 10); % Powielenie stworzy teraz płaski wektor o długości 1150 znaków
-N_text = length(text_seq);
 
-% Obliczanie częstotliwości w tekście
-counts_text = zeros(1, num_symbols);
-for i = 1:num_symbols
-    counts_text(i) = sum(text_seq == alphabet(i)); % Teraz zadziała bezbłędnie
+% 1. Tworzenie długiego ciągu tekstowego (powielamy próbkę, aby przekroczyć 1000 znaków)
+probka_tekstu = 'litwoojczyznomojatyjestesjakzdrowieilecietrzebacenictentylkosiedowiektociestracildzispieknosctwawcalejozdobiewidzeiopisujeboteskniepotobie';
+ciag_tekstowy = repmat(probka_tekstu, 1, 10); 
+dlugosc_tekstu = length(ciag_tekstowy);
+
+% 2. Obliczanie prawdopodobieństwa wystąpienia każdego znaku w tekście
+wystapienia_tekst = zeros(1, rozmiar_alfabetu);
+for i = 1:rozmiar_alfabetu
+    wystapienia_tekst(i) = sum(ciag_tekstowy == alfabet(i));
 end
-prob_text = counts_text / N_text;
+prawdopodobienstwa_tekst = wystapienia_tekst / dlugosc_tekstu;
 
-% Usunięcie symboli niewystępujących w tekście
-valid_idx_t = prob_text > 0;
-symbols_text_valid = symbols(valid_idx_t);
-prob_text_valid = prob_text(valid_idx_t);
+% 3. Usunięcie znaków, które nie wystąpiły w tekście (np. 'q', 'x', '7')
+czy_niezerowe_tekst = prawdopodobienstwa_tekst > 0;
+uzyte_symbole_tekst = symbole_alfabetu(czy_niezerowe_tekst);
+uzyte_prawdobienstwa_tekst = prawdopodobienstwa_tekst(czy_niezerowe_tekst);
 
-% Tworzenie słownika
-[dict_text, avg_len_text] = huffmandict(symbols_text_valid, prob_text_valid);
+% 4. Tworzenie słownika Huffmana
+[slownik_tekstowy, srednia_dlugosc_tekstowa] = huffmandict(uzyte_symbole_tekst, uzyte_prawdobienstwa_tekst);
 
-% Kodowanie i dekodowanie
-sig_text_cell = num2cell(text_seq);
-hcode_text = huffmanenco(sig_text_cell, dict_text);
-dhsig_text_cell = huffmandeco(hcode_text, dict_text);
-decoded_text = cell2mat(dhsig_text_cell);
+% 5. Kodowanie i dekodowanie
+ciag_tekstowy_do_kodowania = num2cell(ciag_tekstowy);
+zakodowane_bity_tekst = huffmanenco(ciag_tekstowy_do_kodowania, slownik_tekstowy);
+odkodowane_komorki_tekst = huffmandeco(zakodowane_bity_tekst, slownik_tekstowy);
+odkodowany_ciag_tekstowy = cell2mat(odkodowane_komorki_tekst);
 
-% Sprawdzenie poprawności
-is_equal_text = isequal(text_seq, decoded_text);
+% 6. Sprawdzenie poprawności
+czy_identyczne_tekst = isequal(ciag_tekstowy, odkodowany_ciag_tekstowy);
+disp(' ');
 disp('--- TEKST NATURALNY ---');
-disp(['Czy odkodowany tekst jest identyczny z oryginałem? ', num2str(is_equal_text)]);
-disp(['Średnia długość słowa kodowego: ', num2str(avg_len_text), ' bitów/znak']);
+disp(['Czy odkodowany tekst jest w 100% zgodny z oryginałem? ', num2str(czy_identyczne_tekst)]);
+disp(['Średnia długość pojedynczego kodu: ', num2str(srednia_dlugosc_tekstowa), ' bitów na znak']);
