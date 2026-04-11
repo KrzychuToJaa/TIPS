@@ -33,13 +33,12 @@ end
 disp(['Średnia długość pojedynczego kodu: ', num2str(srednia_dlugosc_losowa), ' bitów na znak']);
 
 % ETAP 3: 
-probka_tekstu = 'litwoojczyznomojatyjestesjakzdrowieilecietrzebacenictentylkosiedowiektociestracildzispieknosctwawcalejozdobiewidzeiopisujeboteskniepotobie';
-ciag_tekstowy = repmat(probka_tekstu, 1, 10); 
-dlugosc_tekstu = length(ciag_tekstowy);
+probka_tekstu = 'litwoojczyznomojatyjestesjakzdrowieilecietrzebacenictentylkosiedowiedktociestracildzispieknosctwawcalejozdobiewidzeiopisujeboteskniepotobiepannaswietacojasnejbroniszczestochowyiwostrejswieciszbramietycogrodzamkowynowogrodzkiochroniaszzjegowiernymludemjakmniedzieckodozdrowiapowrocilascudemgdyodplaczacejmatkipodtwojeopiekeofiarowanymartwapodnioslempowiekeizarazmoglempieszodotwychswiatynproguiszzawroconezyciepodziekowacbogutaknaspowrocisccudemnaojczyznylonotymczasemprzenosmojeduszeutesknionadotychpagorkowlesnychdotychlakzielonychszerokonadblekitnymniemnemrozciagnionychdotychpolmalowanychzbozemrozmaitemwyzlacanychpszenicaposrebrzanychzytemgdziebursztynowyswierzopgrykajaksniegbialagdziepanienskimrumiencemdziecielinapalaawszystkoprzepasanejakbywstegamiedzazielonananiejzradkacichegruszesiedzalitwoojczyznomojatyjestesjakzdrowieilecietrzebacenictentylkosiedowiedktociestracildzispieknosctwawcalejozdobiewidzeiopisujeboteskniepotobiepannaswietacojasnejbroniszczestochowyiwostrejswieciszbramietycogrodzamkowynowogrodzkiochroni';
+dlugosc_tekstu = length(probka_tekstu);
 
 wystapienia_tekst = zeros(1, rozmiar_alfabetu);
 for i = 1:rozmiar_alfabetu
-    wystapienia_tekst(i) = sum(ciag_tekstowy == alfabet(i));
+    wystapienia_tekst(i) = sum(probka_tekstu == alfabet(i));
 end
 prawdopodobienstwa_tekst = wystapienia_tekst / dlugosc_tekstu;
 
@@ -49,12 +48,12 @@ uzyte_prawdopodobienstwa_tekst = prawdopodobienstwa_tekst(czy_niezerowe_tekst);
 
 [slownik_tekstowy, srednia_dlugosc_tekstowa] = huffmandict(uzyte_symbole_tekst, uzyte_prawdopodobienstwa_tekst);
 
-ciag_tekstowy_do_kodowania = num2cell(ciag_tekstowy);
+ciag_tekstowy_do_kodowania = num2cell(probka_tekstu);
 zakodowane_bity_tekst = huffmanenco(ciag_tekstowy_do_kodowania, slownik_tekstowy);
 odkodowane_komorki_tekst = huffmandeco(zakodowane_bity_tekst, slownik_tekstowy);
 odkodowany_ciag_tekstowy = cell2mat(odkodowane_komorki_tekst);
 
-czy_identyczne_tekst = isequal(ciag_tekstowy, odkodowany_ciag_tekstowy);
+czy_identyczne_tekst = isequal(probka_tekstu, odkodowany_ciag_tekstowy);
 disp(' ');
 disp('Interpretacja tekstu');
 if  (czy_identyczne_tekst)
