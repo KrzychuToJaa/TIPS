@@ -72,3 +72,14 @@ if  (czy_identyczne_tekst)
     disp('Ciąg znaków zgodny z oryginałem');
 end
 disp(['Średnia długość pojedynczego kodu: ', num2str(srednia_dlugosc_tekstowa), ' bitów na znak']);
+
+disp('Wygenerowany Słownik Huffmana dla tekstu normalnego');
+for i = 1:size(slownik_tekstowy, 1)
+
+    symbol = slownik_tekstowy{i, 1};
+    kod = slownik_tekstowy{i, 2};
+
+    kod_jako_tekst = num2str(kod, '%d');
+
+    fprintf('Znak: ''%c''  ->  Kod: %s\n', symbol, kod_jako_tekst);
+end
