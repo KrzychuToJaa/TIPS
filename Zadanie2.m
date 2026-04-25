@@ -22,10 +22,10 @@ uzyte_symbole_losowe = symbole_bazowe(maska_losowe);
 zakodowane_losowe = huffmanenco(num2cell(ciag_losowy), slownik_losowy);
 odkodowane_losowe = cell2mat(huffmandeco(zakodowane_losowe, slownik_losowy));
 if isequal(ciag_losowy, odkodowane_losowe)
-    disp('Status ciągu losowego: Zdekodowany zgodnie z oryginałem.');
+    disp('Status ciągu losowego: Zgodny z orygniałem');
 end
 disp(['Średnia długość przed: ', num2str(bity_przed_bazowy), ' bitów']);
-disp(['Średnia długość po: ', num2str(avg_len_losowy), ' bitów']);
+disp(['Średnia długość po (Huffman): ', num2str(avg_len_losowy), ' bitów']);
 disp(' ');
 
 % ETAP 3: Kodowanie tekstu naturalnego z pliku (rozszerzony alfabet)
@@ -54,11 +54,12 @@ uzyte_symbole_tekst = symbole_rozszerzone(maska_tekst);
 zakodowane_tekst = huffmanenco(num2cell(probka_tekstu), slownik_tekstowy);
 odkodowane_tekst = cell2mat(huffmandeco(zakodowane_tekst, slownik_tekstowy));
 if isequal(probka_tekstu, odkodowane_tekst)
-    disp('Status tekstu naturalnego: Zdekodowany zgodnie z oryginałem.');
+    disp('Status tekstu naturalnego: Zgodny z oryginałem');
 end
 
 % ETAP 4: Wyświetlanie wyników i słowników dla tekstu
-disp('SŁOWNIK PRZED KODOWANIEM:');
+disp(' ');
+disp('SŁOWNIK PRZED KODOWANIEM (Alfabet rozszerzony):');
 for i = 1:length(uzyte_symbole_tekst)
     s = uzyte_symbole_tekst{i};
     idx = find(alfabet_rozszerzony == s) - 1;
@@ -66,7 +67,7 @@ for i = 1:length(uzyte_symbole_tekst)
 end
 
 disp(' ');
-disp('SŁOWNIK PO KODOWANIU:');
+disp('SŁOWNIK PO KODOWANIU (Huffman dla tekstu z pliku):');
 for i = 1:size(slownik_tekstowy, 1)
     fprintf('Znak: ''%s'' -> Kod zmienny: %s\n', slownik_tekstowy{i,1}, num2str(slownik_tekstowy{i,2}, '%d'));
 end
