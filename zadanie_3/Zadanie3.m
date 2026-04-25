@@ -47,11 +47,11 @@ end
 fprintf('Wyliczony współczynnik SNR dla %d bitów wynosi: %.2f dB\n', liczba_bitow, snr_db);
 
 %% 6. Wizualizacja
-figure;
+figure('Color', 'w'); % Wymuszenie białego tła dla lepszego kontrastu
 
 % Wykres 1: Sygnał ciągły
 subplot(3,1,1);
-plot(czas_ciagly, sygnal_ciagly, 'b', 'LineWidth', 1.5);
+plot(czas_ciagly, sygnal_ciagly, 'b', 'LineWidth', 2); % Mocny niebieski
 title('Sygnał "Ciągły"'); 
 xlabel('Czas [s]'); 
 ylabel('Amplituda'); 
@@ -59,7 +59,7 @@ grid on;
 
 % Wykres 2: Sygnał spróbkowany
 subplot(3,1,2);
-stem(czas_dyskretny, sygnal_dyskretny, 'r', 'filled');
+stem(czas_dyskretny, sygnal_dyskretny, 'r', 'filled', 'LineWidth', 1.5); % Wyrazisty czerwony
 title(sprintf('Sygnał Spróbkowany (fs = %d Hz)', czestotliwosc_probkowania)); 
 xlabel('Czas [s]'); 
 ylabel('Amplituda'); 
@@ -67,8 +67,10 @@ grid on;
 
 % Wykres 3: Sygnał skwantowany i zrekonstruowany (ZOH)
 subplot(3,1,3);
-stairs(czas_dyskretny, sygnal_skwantowany, 'k', 'LineWidth', 1.5); hold on;
-stem(czas_dyskretny, sygnal_skwantowany, 'k'); hold off;
+% Magenta ('m') dla schodków - świetnie kontrastuje
+stairs(czas_dyskretny, sygnal_skwantowany, 'm', 'LineWidth', 2); hold on;
+% Ciemnozielony ('g') dla punktów próbek skwantowanych
+stem(czas_dyskretny, sygnal_skwantowany, 'g', 'filled', 'LineWidth', 1.5); hold off;
 title(sprintf('Sygnał Skwantowany (Bity = %d) -> Zrekonstruowany (ZOH)', liczba_bitow));
 xlabel('Czas [s]'); 
 ylabel('Amplituda'); 
