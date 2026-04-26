@@ -1,77 +1,68 @@
-%% 1. Parametry wejściowe i wygenerowanie "ciągłego" sygnału
-czestotliwosc_sygnalu = 5;          % Częstotliwość sygnału w Hz
-amplituda = 1;                      % Amplituda sygnału
-czas_ciagly = 0:0.0001:1;           % Bardzo gęsty wektor czasu - symulacja ciągłości
+czestotliwosc_sygnalu = 5;          
+amplituda = 1;                      
+czas_ciagly = 0:0.0001:1;           
+czestotliwosc_probkowania = 50;     
+okres_probkowania = 1/czestotliwosc_probkowania;  
+czas_dyskretny = 0:okres_probkowania:1;   
 
-% Sygnał "ciągły" (sinusoidalny)
-sygnal_ciagly = amplituda * sin(2*pi*czestotliwosc_sygnalu*czas_ciagly); 
+% WARIANT A: Sinusoidalny
+%sygnal_ciagly = amplituda * sin(2*pi*czestotliwosc_sygnalu*czas_ciagly); 
+%sygnal_dyskretny = amplituda * sin(2*pi*czestotliwosc_sygnalu*czas_dyskretny); 
 
-% Alternatywnie: sygnał prostokątny (odkomentuj poniższą linię, wymaga Signal Processing Toolbox)
-% sygnal_ciagly = amplituda * square(2*pi*czestotliwosc_sygnalu*czas_ciagly); 
+%WARIANT B: Prostokątny
+sygnal_ciagly = amplituda * square(2*pi*czestotliwosc_sygnalu*czas_ciagly); 
+sygnal_dyskretny = amplituda * square(2*pi*czestotliwosc_sygnalu*czas_dyskretny);
 
-%% 2. Próbkowanie (Postać ciągła -> Dyskretna)
-czestotliwosc_probkowania = 50;     % Częstotliwość próbkowania w Hz
-okres_probkowania = 1/czestotliwosc_probkowania;  % Okres próbkowania
-czas_dyskretny = 0:okres_probkowania:1;           % Wektor czasu dla sygnału dyskretnego
+liczba_bitow = 4;
+liczba_poziomow = 2^liczba_bitow;
+krok_kwantyzacji = 2*amplituda / liczba_poziomow;
 
-% Spróbkowany sygnał (dokładne wartości)
-sygnal_dyskretny = amplituda * sin(2*pi*czestotliwosc_sygnalu*czas_dyskretny); 
+indeksy = round((sygnal_dyskretny + amplituda)/krok_kwantyzacji - 0.5);
+indeksy = max(0, min(liczba_poziomow-1, indeksy));
+sygnal_skwantowany = indeksy * krok_kwantyzacji - amplituda + krok_kwantyzacji/2;
 
-%% 3. Kwantyzacja (Ograniczenie poziomów amplitudy)
-liczba_bitow = 4;                   % Rozdzielczość w bitach
-liczba_poziomow = 2^liczba_bitow;   % Liczba poziomów kwantyzacji
+sygnal_rek_calkowity = zeros(size(czas_ciagly));
+sygnal_rek_bez_kwantyzacji = zeros(size(czas_ciagly));
 
-% Prosta metoda kwantyzacji jednorodnej:
-sygnal_znormalizowany = (sygnal_dyskretny + amplituda) / (2*amplituda); % Normalizacja do przedziału [0, 1]
-sygnal_skwantowany = round(sygnal_znormalizowany * (liczba_poziomow-1)) / (liczba_poziomow-1); % Kwantyzacja
-sygnal_skwantowany = (sygnal_skwantowany * 2*amplituda) - amplituda; % Powrót do pierwotnej amplitudy [-A, A]
-
-%% 4. Odtworzenie sygnału (Postać dyskretna -> Ciągła)
-% Używamy funkcji 'stairs' w sekcji rysowania wykresów do wizualizacji 
-% metody ZOH (Zero-Order Hold), co daje charakterystyczne "schodki".
-
-%% 5. Obliczenie SNR (Signal-to-Noise Ratio)
-% Szum kwantyzacji to różnica między próbkami dokładnymi a skwantowanymi
-szum_kwantyzacji = sygnal_dyskretny - sygnal_skwantowany; 
-
-% Moc sygnału spróbkowanego i moc szumu
-moc_sygnalu = var(sygnal_dyskretny); 
-moc_szumu = var(szum_kwantyzacji);
-
-% Obliczenie SNR w decybelach (dB)
-if moc_szumu == 0
-    snr_db = Inf; % Jeśli nie ma szumu (idealne trafienia z poziomami)
-else
-    snr_db = 10 * log10(moc_sygnalu / moc_szumu);
+for i = 1:length(czas_dyskretny)
+    kernel_sinc = sinc((czas_ciagly - czas_dyskretny(i)) / okres_probkowania);
+    
+    sygnal_rek_calkowity = sygnal_rek_calkowity + sygnal_skwantowany(i) * kernel_sinc;
+    
+    sygnal_rek_bez_kwantyzacji = sygnal_rek_bez_kwantyzacji + sygnal_dyskretny(i) * kernel_sinc;
 end
-fprintf('Wyliczony współczynnik SNR dla %d bitów wynosi: %.2f dB\n', liczba_bitow, snr_db);
 
-%% 6. Wizualizacja
-figure('Color', 'w'); % Wymuszenie białego tła dla lepszego kontrastu
+SNR_po_probkowaniu = 10*log10(mean(sygnal_ciagly.^2) / mean((sygnal_ciagly - sygnal_rek_bez_kwantyzacji).^2));
+SNR_po_kwantyzacji = 10*log10(mean(sygnal_dyskretny.^2) / mean((sygnal_dyskretny - sygnal_skwantowany).^2));
+SNR_calkowity = 10*log10(mean(sygnal_ciagly.^2) / mean((sygnal_ciagly - sygnal_rek_calkowity).^2));
 
-% Wykres 1: Sygnał ciągły
-subplot(3,1,1);
-plot(czas_ciagly, sygnal_ciagly, 'b', 'LineWidth', 2); % Mocny niebieski
-title('Sygnał "Ciągły"'); 
-xlabel('Czas [s]'); 
-ylabel('Amplituda'); 
-grid on;
+fprintf('SNR przed probkowaniem: inf dB\n');
+fprintf('SNR po probkowaniu: %.2f dB\n', SNR_po_probkowaniu);
+fprintf('SNR po kwantyzacji: %.2f dB\n', SNR_po_kwantyzacji);
+fprintf('SNR calkowity: %.2f dB\n', SNR_calkowity);
 
-% Wykres 2: Sygnał spróbkowany
+kolor_oryg = [0 0.4470 0.7410]; kolor_przetw = [0.8500 0.3250 0.0980];
+fig = figure('Position', [100, 100, 800, 800], 'Color', 'w');
+ustawienia = {'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', [0.7 0.7 0.7]};
+
+% Wykres 1
+subplot(3,1,1); 
+plot(czas_ciagly, sygnal_ciagly, 'Color', kolor_oryg, 'LineWidth', 1.5);
+set(gca, ustawienia{:}); grid on; title('sygnal ciagly', 'Color', 'k');
+xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]);
+
+% Wykres 2
 subplot(3,1,2);
-stem(czas_dyskretny, sygnal_dyskretny, 'r', 'filled', 'LineWidth', 1.5); % Wyrazisty czerwony
-title(sprintf('Sygnał Spróbkowany (fs = %d Hz)', czestotliwosc_probkowania)); 
-xlabel('Czas [s]'); 
-ylabel('Amplituda'); 
-grid on;
+stem(czas_dyskretny, sygnal_dyskretny, 'Color', kolor_oryg, 'Marker', 'o', 'LineWidth', 1); hold on;
+stem(czas_dyskretny, sygnal_skwantowany, 'Color', kolor_przetw, 'Marker', '*', 'LineWidth', 1); hold off;
+set(gca, ustawienia{:}); grid on; title('probki przed i po kwantyzacji (4-bit)', 'Color', 'k');
+xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]);
+legend('oryginalne', 'skwantyzowane', 'Location', 'northeast');
 
-% Wykres 3: Sygnał skwantowany i zrekonstruowany (ZOH)
+% Wykres 3
 subplot(3,1,3);
-% Magenta ('m') dla schodków - świetnie kontrastuje
-stairs(czas_dyskretny, sygnal_skwantowany, 'm', 'LineWidth', 2); hold on;
-% Ciemnozielony ('g') dla punktów próbek skwantowanych
-stem(czas_dyskretny, sygnal_skwantowany, 'g', 'filled', 'LineWidth', 1.5); hold off;
-title(sprintf('Sygnał Skwantowany (Bity = %d) -> Zrekonstruowany (ZOH)', liczba_bitow));
-xlabel('Czas [s]'); 
-ylabel('Amplituda'); 
-grid on;
+plot(czas_ciagly, sygnal_ciagly, 'Color', kolor_oryg, 'LineWidth', 1.5); hold on;
+plot(czas_ciagly, sygnal_rek_calkowity, '--', 'Color', kolor_przetw, 'LineWidth', 1.5); hold off;
+set(gca, ustawienia{:}); grid on; title(sprintf('rekonstrukcja sygnalu | SNR = %.2f dB', SNR_calkowity), 'Color', 'k');
+xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]);
+legend('oryginal', 'rekonstrukcja', 'Location', 'northeast');
