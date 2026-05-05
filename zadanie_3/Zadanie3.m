@@ -1,9 +1,9 @@
-czestotliwosc_sygnalu = 5;          
-amplituda = 1;                      
-czas_ciagly = 0:0.0001:1;           
-czestotliwosc_probkowania = 50;     
-okres_probkowania = 1/czestotliwosc_probkowania;  
-czas_dyskretny = 0:okres_probkowania:1;   
+czestotliwosc_sygnalu = 5;
+amplituda = 1;
+czas_ciagly = 0:0.0001:1;
+czestotliwosc_probkowania = 50;
+okres_probkowania = 1/czestotliwosc_probkowania;
+czas_dyskretny = 0:okres_probkowania:1;
 
 % WARIANT A: Sinusoidalny
 %sygnal_ciagly = amplituda * sin(2*pi*czestotliwosc_sygnalu*czas_ciagly); 
