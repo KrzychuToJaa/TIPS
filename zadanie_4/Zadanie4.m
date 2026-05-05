@@ -44,14 +44,16 @@ plot(czas_ciagly, sygnal_ciagly, 'b'); hold on;
 stem(czas_dyskretny, sygnal_skwantowany, 'r');
 title('Sygnaly w dziedzinie czasu (Suma Sinusów)');
 legend('Przed A/C', 'Po A/C');
-xlabel('Czas [s]'); ylabel('Amplituda');
+xlabel('Czas [s]'); 
+ylabel('Amplituda');
 
 subplot(2,1,2);
 plot(os_czestotliwosci_ciagla, widmo_przed, 'b'); hold on;
 stem(os_czestotliwosci_dyskretna, widmo_po, 'r');
 title('Transformacja Fouriera (FFT) - Suma Sinusów');
 legend('Widmo przed A/C', 'Widmo po A/C');
-xlabel('Czestotliwosc [Hz]'); ylabel('Amplituda');
+xlabel('Czestotliwosc [Hz]'); 
+ylabel('Amplituda');
 xlim([0 100]); 
 
 % Punkt 3
@@ -90,12 +92,14 @@ plot(czas_ciagly_stary, sygnal_ciagly_stary, 'b'); hold on;
 stem(czas_dyskretny_stary, sygnal_skwantowany_stary, 'r');
 title('POPRZEDNIE ZADANIE: Dziedzina czasu (Pojedynczy sinus)');
 legend('Przed A/C', 'Po A/C');
-xlabel('Czas [s]'); ylabel('Amplituda');
+xlabel('Czas [s]'); 
+ylabel('Amplituda');
 
 subplot(2,1,2);
 plot(os_czestotliwosci_ciagla_stara, widmo_przed_stare, 'b'); hold on;
 stem(os_czestotliwosci_dyskretna_stara, widmo_po_stare, 'r');
 title('POPRZEDNIE ZADANIE: Transformacja Fouriera (FFT)');
 legend('Widmo przed A/C', 'Widmo po A/C');
-xlabel('Czestotliwosc [Hz]'); ylabel('Amplituda');
+xlabel('Czestotliwosc [Hz]'); 
+ylabel('Amplituda');
 xlim([0 50]);
