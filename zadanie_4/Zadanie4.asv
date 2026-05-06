@@ -25,13 +25,13 @@ for i = 1:length(ilosci_skladowych)
         sygnal = sygnal + A(k) * sin(2*pi*f(k)*czas_ciagly + P(k));
     end
     
-    % Dziedzina czasu
+    % Dziedzina czasu (Lewa strona)
     subplot(4, 2, 2*i - 1);
     plot(czas_ciagly, sygnal, 'Color', kolor_czas); 
     title(tytuly_czas{i}); xlabel('czas [s]'); ylabel('amplituda');
     xlim([0 2]); grid on;
     
-    % FFT
+    % FFT (Prawa strona)
     [os_f, widmo] = calc_fft(sygnal, czestotliwosc_ciagla);
     
     subplot(4, 2, 2*i);
@@ -40,7 +40,9 @@ for i = 1:length(ilosci_skladowych)
     xlim([0 80]); ylim([0 1.1]); grid on;
 end
 
+% =========================================================================
 % ZESTAW B - Symulacja przetwornika A/C
+% =========================================================================
 f_bazowa = 5; 
 czestotliwosc_probkowania = 50; 
 czas_dyskretny = 0:(1/czestotliwosc_probkowania):2;
