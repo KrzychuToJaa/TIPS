@@ -1,5 +1,3 @@
-clear; clc; close all;
-
 kolor_czas = [1, 0.5, 0];
 kolor_widmo = [1, 0.4, 0.7];
 
@@ -28,16 +26,22 @@ for i = 1:length(ilosci_skladowych)
     % Dziedzina czasu
     subplot(4, 2, 2*i - 1);
     plot(czas_ciagly, sygnal, 'Color', kolor_czas); 
-    title(tytuly_czas{i}); xlabel('czas [s]'); ylabel('amplituda');
-    xlim([0 2]); grid on;
+    title(tytuly_czas{i}); 
+    xlabel('czas [s]'); 
+    ylabel('amplituda');
+    xlim([0 2]); 
+    grid on;
     
-    % FFT
     [os_f, widmo] = calc_fft(sygnal, czestotliwosc_ciagla);
     
     subplot(4, 2, 2*i);
     stem(os_f, widmo, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
-    title(tytuly_widmo{i}); xlabel('czestotliwosc [Hz]'); ylabel('amplituda');
-    xlim([0 80]); ylim([0 1.1]); grid on;
+    title(tytuly_widmo{i}); 
+    xlabel('czestotliwosc [Hz]'); 
+    ylabel('amplituda');
+    xlim([0 80]); 
+    ylim([0 1.1]); 
+    grid on;
 end
 
 % ZESTAW B - Symulacja przetwornika A/C
@@ -70,38 +74,78 @@ sq_adc = indeksy_sq * krok_kwantyzacji - 1 + krok_kwantyzacji/2;
 figure('Name', '', 'Position', [150, 150, 1000, 800]);
 
 % Sinus
-subplot(4, 2, 1); plot(czas_ciagly, sin_ciagly, 'Color', kolor_czas); 
-title('Przebieg sinusoidalny ciągły - Dziedzina czasu'); xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]); grid on;
+subplot(4, 2, 1); 
+plot(czas_ciagly, sin_ciagly, 'Color', kolor_czas); 
+title('Przebieg sinusoidalny ciągły - Dziedzina czasu'); 
+xlabel('czas [s]'); 
+ylabel('amplituda'); 
+ylim([-1.2 1.2]); 
+grid on;
 
-subplot(4, 2, 2); stem(f_sin_c, widmo_sin_c, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
-title('Przebieg sinusoidalny ciągły - Widmo'); xlabel('czestotliwosc [Hz]'); ylabel('amplituda'); xlim([0 60]); grid on;
+subplot(4, 2, 2); 
+stem(f_sin_c, widmo_sin_c, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
+title('Przebieg sinusoidalny ciągły - Widmo'); 
+xlabel('czestotliwosc [Hz]'); 
+ylabel('amplituda'); 
+xlim([0 60]); 
+grid on;
 
-subplot(4, 2, 3); stairs(czas_dyskretny, sin_adc, 'Color', kolor_czas); 
-title('Przebieg sinusoidalny po A/C - Dziedzina czasu'); xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]); grid on;
+subplot(4, 2, 3); 
+stairs(czas_dyskretny, sin_adc, 'Color', kolor_czas); 
+title('Przebieg sinusoidalny po A/C - Dziedzina czasu'); 
+xlabel('czas [s]'); 
+ylabel('amplituda'); 
+ylim([-1.2 1.2]); 
+grid on;
 
-subplot(4, 2, 4); stem(f_sin_d, widmo_sin_adc, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
-title('Przebieg sinusoidalny po A/C - Widmo'); xlabel('czestotliwosc [Hz]'); ylabel('amplituda'); xlim([0 25]); grid on;
+subplot(4, 2, 4); 
+stem(f_sin_d, widmo_sin_adc, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
+title('Przebieg sinusoidalny po A/C - Widmo'); 
+xlabel('czestotliwosc [Hz]'); 
+ylabel('amplituda'); 
+xlim([0 25]); 
+grid on;
 
 % Prostokąt
-subplot(4, 2, 5); plot(czas_ciagly, sq_ciagly, 'Color', kolor_czas); 
-title('Przebieg prostokątny ciągły - Dziedzina czasu'); xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]); grid on;
+subplot(4, 2, 5); 
+plot(czas_ciagly, sq_ciagly, 'Color', kolor_czas); 
+title('Przebieg prostokątny ciągły - Dziedzina czasu'); 
+xlabel('czas [s]'); 
+ylabel('amplituda'); 
+ylim([-1.2 1.2]); 
+grid on;
 
-subplot(4, 2, 6); stem(f_sq_c, widmo_sq_c, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
-title('Przebieg prostokątny ciągły - Widmo'); xlabel('czestotliwosc [Hz]'); ylabel('amplituda'); xlim([0 60]); grid on;
+subplot(4, 2, 6); 
+stem(f_sq_c, widmo_sq_c, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
+title('Przebieg prostokątny ciągły - Widmo'); 
+xlabel('czestotliwosc [Hz]'); 
+ylabel('amplituda'); 
+xlim([0 60]); 
+grid on;
 
-subplot(4, 2, 7); stairs(czas_dyskretny, sq_adc, 'Color', kolor_czas); 
-title('Przebieg prostokątny po A/C - Dziedzina czasu'); xlabel('czas [s]'); ylabel('amplituda'); ylim([-1.2 1.2]); grid on;
+subplot(4, 2, 7); 
+stairs(czas_dyskretny, sq_adc, 'Color', kolor_czas); 
+title('Przebieg prostokątny po A/C - Dziedzina czasu'); 
+xlabel('czas [s]'); 
+ylabel('amplituda'); 
+ylim([-1.2 1.2]); 
+grid on;
 
-subplot(4, 2, 8); stem(f_sq_d, widmo_sq_adc, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
-title('Przebieg prostokątny po A/C - Widmo'); xlabel('czestotliwosc [Hz]'); ylabel('amplituda'); xlim([0 25]); grid on;
+subplot(4, 2, 8); 
+stem(f_sq_d, widmo_sq_adc, 'Color', kolor_widmo, 'Marker', 'none', 'LineWidth', 1.5); 
+title('Przebieg prostokątny po A/C - Widmo'); 
+xlabel('czestotliwosc [Hz]'); 
+ylabel('amplituda'); 
+xlim([0 25]); 
+grid on;
 
 function [f, P1] = calc_fft(sig, fs)
-    L = length(sig);               
-    Y = fft(sig);                  
-    P2 = abs(Y/L);                 
-    P1 = P2(1:floor(L/2)+1); 
-    P1(2:end-1) = 2*P1(2:end-1); 
-    f = fs*(0:floor(L/2))/L; 
+    L = length(sig);
+    Y = fft(sig);
+    P2 = abs(Y/L);
+    P1 = P2(1:floor(L/2)+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    f = fs*(0:floor(L/2))/L;
     f = f(:)';
     P1 = P1(:)';
 end
